@@ -1,6 +1,6 @@
-#include "MDBoiler.h"
+#include "MDBoilerButtons.h"
 
-MDBoiler::MDBoiler(int _enablePin, int _plusPin, int _minesPin) {
+MDBoilerButtons::MDBoilerButtons(int _enablePin, int _plusPin, int _minesPin) {
     enablePin = _enablePin;
     plusPin = _plusPin;
     minesPin = _minesPin;
@@ -14,13 +14,13 @@ MDBoiler::MDBoiler(int _enablePin, int _plusPin, int _minesPin) {
     digitalWrite(minesPin, LOW);
 }
 
-void MDBoiler::changeEnabled() {
+void MDBoilerButtons::changeEnabled() {
     digitalWrite(enablePin, HIGH);
     delay(100);
     digitalWrite(enablePin, LOW);
 }
 
-void MDBoiler::set(int tempetarure) {
+void MDBoilerButtons::set(int tempetarure) {
     currentTemperature = tempetarure;
 
     //Сброс заданной температуры до 40

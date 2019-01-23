@@ -1,10 +1,10 @@
 #include "MDBoilerController.h"
-#include "MDBoilerButtons.h"
-#include <OneWire.h>                  // Библиотека протокола 1-Wire
-#include <DallasTemperature.h>        // Библиотека для работы с датчиками DS*
+#include <OneWire.h>                  // Библиотека протокола 1-Wire (датчики температуры)
+#include <DallasTemperature.h>        // Библиотека для работы с датчиками DS* температуры
 
 MDBoilerController *boilerController;
 MDBoilerButtons *boilerButtons;
+MDSim800 *sim800;
 OneWire oneWire(4);        // Создаем экземпляр объекта протокола 1-WIRE - OneWire
 DallasTemperature sensors(&oneWire);  // На базе ссылки OneWire создаем экземпляр объекта, работающего с датчиками DS*
 
@@ -12,29 +12,43 @@ DallasTemperature sensors(&oneWire);  // На базе ссылки OneWire со
 //16- PLUS
 //18- MINES
 
+void parseCommand(String command) {
+     if (command == "Status") {
+        boilerController->changeTimeToSendStatusToNow();
+    } else if (command.indexOf("Set ") > -1) {
+        String temperatureToSetStr = command.substring(4);
+        int temperatureToSet = temperatureToSetStr.toInt();
+        boilerButtons->set(temperatureToSet);
+        sim800->sendToUser("New temperature " + temperatureToSetStr + " has been set.");
+    } else if (command == "Switch") {
+        boilerButtons->changeEnabled();
+        sim800->sendToUser("Switched.");
+    }
+}
+
 void setup()
 {
     Serial.begin(9600);
-    boilerController = new MDBoilerController(6, 3);
+    sensors.begin();    // Запускаем поиск всех датчиков температуры
+    
+    boilerController = new MDBoilerController();
+
     boilerButtons = new MDBoilerButtons(17, 14, 15);
     boilerController->setBoiler(boilerButtons);
 
-    sensors.begin();    // Запускаем поиск всех датчиков
+    sim800 = new MDSim800(6, 3);
+    sim800->setParseCommand(parseCommand);
+    boilerController->setSim800(sim800);
 }
 
 void loop()
 {
-    boilerController->checkForNewSms();
+    sim800->checkForNewSms();
     
-    if(boilerController->lastSendStatusTime + boilerController->timeToSendStatus < millis()) {
-        boilerController->lastSendStatusTime = millis();
-        
+    if(boilerController->isTimeToSendStatus()) {
         sensors.requestTemperatures();      // Запускаем измерение температуры на всех датчиках
-        float temperature = sensors.getTempCByIndex(0);
-
-        Serial.print("Temperature is: ");
-        Serial.println(temperature);
-
-        boilerController->sendStatus(temperature);
+        float boilerTemperature = sensors.getTempCByIndex(0);
+        float roomTemperature = sensors.getTempCByIndex(1);
+        boilerController->sendStatus(boilerTemperature, roomTemperature);
     }
 }

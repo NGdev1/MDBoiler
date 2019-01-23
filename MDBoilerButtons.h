@@ -1,10 +1,10 @@
 #include "Arduino.h"
 
-class MDBoiler
+class MDBoilerButtons
 {
   public:
 
-    MDBoiler(int _enablePin, int _plusPin, int _minesPin);
+    MDBoilerButtons(int _enablePin, int _plusPin, int _minesPin);
 
     void changeEnabled();
     void set(int tempetarure);

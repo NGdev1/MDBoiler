@@ -49,10 +49,7 @@ String MDSim800::sendATCommand(String cmd, bool waiting)
         }
         Serial.println(_resp); // Дублируем ответ в монитор порта
     }
-    if (_resp != "" || _resp.length() > 2)
-    {
-        lastSim800lResponce = _resp;
-    }
+
     return _resp;
 }
 
@@ -88,9 +85,11 @@ void MDSim800::parseSMS(String msg)
     if(msgbody == "Start") {
         userPhone = msgphone;
         sendSMS(msgphone, "OK");
-    } //else {
-        //parseCommand(msgbody);
-    //}
+    } else {
+        if (parseCommand != NULL) {
+            parseCommand(msgbody);
+        }
+    }
 }
 
 void MDSim800::checkForNewSms()
@@ -146,12 +145,15 @@ void MDSim800::checkForNewSms()
         {                                         // Пришло сообщение об отправке SMS
             lastUpdate = millis() - updatePeriod; // Теперь нет необходимости обрабатываеть SMS здесь, достаточно просто// сбросить счетчик автопроверки и в следующем цикле все будет обработано
         }
-        lastSim800lResponce = _response;
     }
     if (Serial.available())
     {                                 // Ожидаем команды по Serial...
         SIM800->write(Serial.read()); // ...и отправляем полученную команду модему
     };
+}
+
+void MDSim800::setParseCommand(parseCommandCallback_t _parseCommand) {
+    parseCommand = _parseCommand;
 }
 
 void MDSim800::sendSMS(String phone, String message)

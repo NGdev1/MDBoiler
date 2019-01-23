@@ -10,13 +10,14 @@ class MDBoilerController
     MDBoilerController();
     void setBoiler(MDBoilerButtons *_boiler);
     void setSim800(MDSim800 *_sim800);
-    void sendStatus(float boilerTemperature);
+    void sendStatus(float boilerTemperature, float roomTemperature);
+    bool isTimeToSendStatus();
+    void changeTimeToSendStatusToNow();
+    
+  private:
+    MDBoilerButtons *boiler;
+    MDSim800 *sim800;
 
     long lastSendStatusTime = millis();
-    long timeToSendStatus = 60000;
-  private:
-    void parseCommand(String command);
-
-    MDBoilerButtons *boiler;
-    MDSim800L *sim8000;
+    long statusSendingPeriod = 60000;
 };
