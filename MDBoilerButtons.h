@@ -4,10 +4,11 @@ class MDBoilerButtons
 {
   public:
 
-    MDBoilerButtons(int _enablePin, int _plusPin, int _minesPin);
+    MDBoilerButtons(int _enablePin, int _plusPin, int _minesPin, int _redLightPin);
 
     void changeEnabled();
     void set(int tempetarure);
+    bool isRedLightOn();
     
     int currentTemperature = -1;
     
@@ -16,4 +17,5 @@ class MDBoilerButtons
     int enablePin;
     int plusPin;
     int minesPin;
+    int redLightPin;
 };

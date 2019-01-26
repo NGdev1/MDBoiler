@@ -5,17 +5,11 @@
 #include "Arduino.h"
 #include "MDBoilerController.h"
 
-MDBoilerController::MDBoilerController()
+MDBoilerController::MDBoilerController(int enablePin, int plusPin, int minesPin, int redLightPin, int rxPin, int txPin, parseCommandCallback_t parseCommand)
 {
-
-}
-
-void MDBoilerController::setBoiler(MDBoilerButtons *_boiler) {
-    boiler = _boiler;
-}
-
-void MDBoilerController::setSim800(MDSim800 *_sim800) {
-    sim800 = _sim800;
+    boiler = new MDBoilerButtons(enablePin, plusPin, minesPin, redLightPin);
+    sim800 = new MDSim800(rxPin, txPin);
+    sim800->setParseCommand(parseCommand);
 }
 
 void MDBoilerController::sendStatus(float boilerTemperature, float roomTemperature) {
@@ -39,4 +33,29 @@ bool MDBoilerController::isTimeToSendStatus() {
 
 void MDBoilerController::changeTimeToSendStatusToNow() {
     lastSendStatusTime = 0;
+}
+
+void MDBoilerController::checkRedLight() {
+    if (isUserNotifiedAboutRedLight) return;
+
+    if(boiler->isRedLightOn()) {
+        sim800->sendToUser("Warning! Red light is on.");
+        isUserNotifiedAboutRedLight = true;
+    }
+}
+
+void MDBoilerController::changeBoilerEnabled() {
+    isUserNotifiedAboutRedLight = false;
+
+    boiler->changeEnabled();
+    sim800->sendToUser("Switched.");
+}
+
+void MDBoilerController::set(String temperature) {
+    boiler->set(temperature.toInt());
+    sim800->sendToUser("New temperature " + temperature + " has been set.");
+}
+
+void MDBoilerController::checkForNewSms() {
+    sim800->checkForNewSms();
 }

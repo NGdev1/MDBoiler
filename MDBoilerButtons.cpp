@@ -1,13 +1,15 @@
 #include "MDBoilerButtons.h"
 
-MDBoilerButtons::MDBoilerButtons(int _enablePin, int _plusPin, int _minesPin) {
+MDBoilerButtons::MDBoilerButtons(int _enablePin, int _plusPin, int _minesPin, int _redLightPin) {
     enablePin = _enablePin;
     plusPin = _plusPin;
     minesPin = _minesPin;
+    redLightPin = _redLightPin;
 
     pinMode(enablePin, OUTPUT);
     pinMode(plusPin, OUTPUT);
     pinMode(minesPin, OUTPUT);
+    pinMode(redLightPin, INPUT);
 
     digitalWrite(enablePin, LOW);
     digitalWrite(plusPin, LOW);
@@ -37,4 +39,8 @@ void MDBoilerButtons::set(int tempetarure) {
         digitalWrite(plusPin, LOW);
         delay(100);
     }
+}
+
+bool MDBoilerButtons::isRedLightOn() {
+    return (analogRead(redLightPin) > 400);
 }

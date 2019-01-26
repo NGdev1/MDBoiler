@@ -5,7 +5,6 @@
 
 class MDSim800
 {
-
     typedef void (*parseCommandCallback_t)(String);
 
   public:
