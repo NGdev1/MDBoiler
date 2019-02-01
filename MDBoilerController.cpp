@@ -5,11 +5,10 @@
 #include "Arduino.h"
 #include "MDBoilerController.h"
 
-MDBoilerController::MDBoilerController(int enablePin, int plusPin, int minesPin, int redLightPin, int rxPin, int txPin, parseCommandCallback_t parseCommand)
+MDBoilerController::MDBoilerController(int enablePin, int plusPin, int minesPin, int redLightPin, int rxPin, int txPin)
 {
     boiler = new MDBoilerButtons(enablePin, plusPin, minesPin, redLightPin);
     sim800 = new MDSim800(rxPin, txPin);
-    sim800->setParseCommand(parseCommand);
 }
 
 void MDBoilerController::sendStatus(float boilerTemperature, float roomTemperature) {

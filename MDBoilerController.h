@@ -6,10 +6,8 @@
 
 class MDBoilerController
 {
-    typedef void (*parseCommandCallback_t)(String);
-
   public:
-    MDBoilerController(int enablePin, int plusPin, int minesPin, int redLightPin, int rxPin, int txPin, parseCommandCallback_t parseCommand);
+    MDBoilerController(int enablePin, int plusPin, int minesPin, int redLightPin, int rxPin, int txPin);
     void sendStatus(float boilerTemperature, float roomTemperature);
     void checkRedLight();
     bool isTimeToSendStatus();
@@ -18,9 +16,9 @@ class MDBoilerController
     void checkForNewSms();
     void set(String temperature);
     
+    MDSim800 *sim800;
   private:
     MDBoilerButtons *boiler;
-    MDSim800 *sim800;
 
     bool isUserNotifiedAboutRedLight = false;
     long lastSendStatusTime = millis();

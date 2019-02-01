@@ -26,7 +26,8 @@ void setup()
     Serial.begin(9600);
     sensors.begin();    // Запускаем поиск всех датчиков температуры
     
-    boilerController = new MDBoilerController(14, 17, 15, 16, 6, 3, parseCommand);
+    boilerController = new MDBoilerController(14, 17, 15, 16, 6, 3);
+    boilerController->sim800->setParseCommand(parseCommand);
 }
 
 void loop()
