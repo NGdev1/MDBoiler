@@ -3,12 +3,12 @@
 #include <DallasTemperature.h>        // Библиотека для работы с датчиками DS* температуры
 
 MDBoilerController *boilerController;
-OneWire oneWire(4);        // Создаем экземпляр объекта протокола 1-WIRE - OneWire
+OneWire oneWire(9);        // Создаем экземпляр объекта протокола 1-WIRE - OneWire
 DallasTemperature sensors(&oneWire);  // На базе ссылки OneWire создаем экземпляр объекта, работающего с датчиками DS*
 
 //14 - ON/OFF
 //15- MINES
-//17- PLUS
+//16- PLUS
 
 void parseCommand(String command) {
      if (command == "Status") {
@@ -26,14 +26,14 @@ void setup()
     Serial.begin(9600);
     sensors.begin();    // Запускаем поиск всех датчиков температуры
     
-    boilerController = new MDBoilerController(14, 17, 15, 16, 6, 3);
+    boilerController = new MDBoilerController(14, 16, 15, 19, 2, 3);
     boilerController->sim800->setParseCommand(parseCommand);
 }
 
 void loop()
 {
     boilerController->checkForNewSms();
-    boilerController->checkRedLight();
+    //boilerController->checkRedLight();
 
     if(boilerController->isTimeToSendStatus()) {
         sensors.requestTemperatures();      // Запускаем измерение температуры на всех датчиках

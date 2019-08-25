@@ -14,6 +14,7 @@ MDSim800::MDSim800(int rxPin, int txPin)
     SIM800->begin(9600);
     sendATCommand("AT", true);
     _response = sendATCommand("AT+CMGF=1;&W", true); // Включаем текстовый режима SMS (Text mode) и сразу сохраняем значение (AT&W)!
+    sendATCommand("AT+CMGDA=\"DEL ALL\"", true);
 }
 
 String MDSim800::waitResponse()

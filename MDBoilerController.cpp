@@ -31,7 +31,7 @@ bool MDBoilerController::isTimeToSendStatus() {
 }
 
 void MDBoilerController::changeTimeToSendStatusToNow() {
-    lastSendStatusTime = 0;
+    lastSendStatusTime = -60000 * 60 * 4;
 }
 
 void MDBoilerController::checkRedLight() {
